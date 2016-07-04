@@ -1,11 +1,33 @@
-0.  TODO
-1.  TODO
-2.  TODO
-3.  TODO
-4.  TODO
-5.  TODO
-6.  TODO
+0.  What is pneumonoultramicroscopicsilicovolcanoconiosis?
+    According to Merriam-Webster's Medical Dictionary,
+    pneumonoultramicroscopicsilicovolcanoconiosis is a
+    pneumoconiosis caused by inhalation of very fine
+    silicate or quartz dust.
+
+1.  According to its man page, what does getrusage do?
+
+2.  Per that same man page, how many members are in a variable
+    of type struct rusage?
+
+3.  Why do you think we pass before and after by reference (instead of by value)
+    to calculate, even though we’re not changing their contents?
+
+4.  Explain as precisely as possible, in a paragraph or more, how main goes
+    about reading words from a file. In other words, convince us that you
+    indeed understand how that function’s for loop works.
+
+5.  Why do you think we used fgetc to read each word’s characters one at a time
+    rather than use fscanf with a format string like "%s" to read whole words 
+    at a time? Put another way, what problems might arise by relying on fscanf 
+    alone?
+
+6.  Why do you think we declared the parameters for check and load as const?
+
 7.  TODO
+
 8.  TODO
+
 9.  TODO
+
 10. TODO
+
