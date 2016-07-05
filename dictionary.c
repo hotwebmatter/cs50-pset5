@@ -70,20 +70,9 @@ bool load(const char* dictionary)
             wordcount++;
             curr = root;
         }
-        else if (c == '\'')
-        {
-            charpos = 26;
-            curr->children[charpos] = (node *)malloc(sizeof(node));
-            if (curr->children[charpos] == NULL)
-            {
-                printf("Error: Failed to allocate memory for node\n");
-                return false;
-            }
-            curr = curr->children[charpos];
-        }
         else
         {
-            charpos = toupper(c) - 'A';
+            charpos = charPosition(c);
             curr->children[charpos] = (node *)malloc(sizeof(node));
             if (curr->children[charpos] == NULL)
             {
@@ -121,7 +110,7 @@ bool free_trie(node* curr)
     bool result = false;
     for (int i = 0; i < KIDS; i++)
     {
-        if (curr->children[i])
+        if (curr->children[i] != NULL)
         {
             result = free_trie(curr->children[i]);
         }
@@ -132,4 +121,16 @@ bool free_trie(node* curr)
         }
     }
     return result;
+}
+
+int charPosition(int character)
+{
+    if (character == '\'')
+        {
+            return 26;
+        }
+        else
+        {
+            return toupper(character) - 'A';
+        }
 }

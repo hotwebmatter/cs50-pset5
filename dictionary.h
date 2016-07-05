@@ -55,4 +55,9 @@ bool unload(void);
  */
 bool free_trie(node* curr);
 
+/**
+ * Given an alphabetic character or apostrophe, returns index in trie
+ */
+int charPosition(int character);
+
 #endif // DICTIONARY_H
