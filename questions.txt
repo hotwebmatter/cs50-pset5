@@ -205,7 +205,7 @@
     The remaining conditional branch is where the bulk of the work is done:
     107 else if (index > 0)
     ... this doesn't look like much on its own, but it will only be reached if
-    fgetc() returns whitespace or punctuation after non-zero stretch of
+    fgetc() returns whitespace or punctuation after a non-zero stretch of
     alphabetic characters, without bumping into any numeric chars or exceeding
     the LENGTH symbolic constant. If all that is true, we terminate the string:
 
@@ -233,9 +233,9 @@
     FALSE, then the word is not in the dictionary, and misspelled = TRUE.
     ... line 121 sets the benchmark for the check() function by calling
     calculate() which basically takes the difference between the timeval
-    structures, after - before, returned by getrusage(). This is a slight
-    oversimplification, but a more complete answer would be beyond the scope
-    of this question.
+    structures, after minus before, returned by getrusage(). (This is a slight
+    oversimplification, but a more complete analysis of the calculate() function
+    would be beyond the scope of this question.)
 
     Little remains in the implementation.
     We check to see whether (misspelled == TRUE) and if it is, we print the
@@ -247,7 +247,10 @@
     126                 printf("%s\n", word);
     127                 misspellings++;
     128             }
-    129 
+
+    Then, as with the other two conditional branches above, we zero out the
+    index value to start collecting chars for the next word:
+
     130             // prepare for next word
     131             index = 0;
     132         }
@@ -260,9 +263,49 @@
     at a time? Put another way, what problems might arise by relying on fscanf 
     alone?
 
+    We read each character of the file one at a time so that we can evaluate
+    each character as we add it to the word[] array. We want to discard strings
+    containing non-alphabetic characters other than the apostrophe, and strings
+    longer than the symbolic constant LENGTH, so it is more efficient to analyze
+    each char as we add it, and discard the string if it contains numbers or
+    punctuation (or if it contains more than 45 characters). It may be possible
+    to read entire words with fscanf() ... but we would still need to analyze
+    each character and count the length in order to filter our input as desired,
+    and doing it this way would add considerable overhead. With the current
+    implementation, we maximize efficiency by keeping track of the string length
+    as we add chars by incrementing the integer variable index, which saves us
+    the bother of calling strlen() to see whether the word is longer than 45
+    chars. Our fgetc() method also saves valuable processor cycles by discarding
+    the remainder of any string that fails to match our criteria, without
+    processing it further. Finally, consider the case of a mega-string, much
+    longer than 45 chars. Using fgetc() allows us to process only the first 46
+    chars before dropping it on the floor, but the fscanf() string-consuming
+    method would be "tricked" into reading the whole string into memory. A
+    sufficiently long string input could be crafted to exceed the bounds of the
+    memory allocated for our use, causing the program to crash.
 
 6.  Why do you think we declared the parameters for check and load as const?
 
+    Here are the function prototype declarations for check() and load() as
+    defined in dictionary.h:
+
+    bool check(const char* word);
+
+    bool load(const char* dictionary);
+
+    The keyword const indicates that the pointers *word and *dictionary are
+    pointers to constant character array values -- that is to say, the strings
+    stored at the referenced memory locations will not be changed through the
+    pointer variables used in the check() and load() functions. (Note that it
+    is still possible to change those values outside of the function, as we do
+    when building each word[] string within the body of the main() function.)
+
+    We declare these pointer variables to point to constant characters in order
+    to ensure that the values passed to these functions will not be changed by
+    the student, no matter how they choose to implement their function. If a
+    student accidentally attempts to modify these values in their function, the
+    compiler will exit with an error message warning that we are attempting
+    "assignment of read-only variable".
 
 7.  TODO
 
