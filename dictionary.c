@@ -14,18 +14,6 @@
 
 #include "dictionary.h"
 
-/**
- * dictionary data structure: it's worth a trie
- */
-#define KIDS 27
-
-typedef struct node
-{
-    bool is_word;
-    struct node* children[KIDS];
-}
-node;
-
 // initialize root node
 node* root;
 
@@ -114,6 +102,24 @@ unsigned int size(void)
  */
 bool unload(void)
 {
-    // TODO
-    return false;
+    bool result = free_trie(root);
+    return result;
+}
+
+bool free_trie(node* curr)
+{
+    bool result = false;
+    for (int i = 0; i < KIDS; i++)
+    {
+        if (curr->children[i])
+        {
+            result = free_trie(curr->children[i]);
+        }
+        else
+        {
+            free(curr);
+            return true;
+        }
+    }
+    return result;
 }

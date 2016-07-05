@@ -17,6 +17,19 @@
 #define LENGTH 45
 
 /**
+ * dictionary data structure: it's worth a trie
+ */
+#define KIDS 27
+
+typedef struct node
+{
+    bool is_word;
+    struct node* children[KIDS];
+}
+node;
+
+
+/**
  * Returns true if word is in dictionary else false.
  */
 bool check(const char* word);
@@ -35,5 +48,11 @@ unsigned int size(void);
  * Unloads dictionary from memory.  Returns true if successful else false.
  */
 bool unload(void);
+
+/**
+ * Recursive implementation of unload() function.
+ * unload() above is now just a wrapper for this function.
+ */
+bool free_trie(node* curr);
 
 #endif // DICTIONARY_H
