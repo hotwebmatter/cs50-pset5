@@ -96,8 +96,9 @@ bool load(const char* dictionary)
         }
         printf("character: %c\tcharpos: %i\n", c, charpos);
     }
-    printf("word count: %i\n", wordcount);
-    return false;
+    // printf("word count: %i\n", wordcount);
+    // return false;
+    return true;
 }
 
 /**
@@ -105,8 +106,7 @@ bool load(const char* dictionary)
  */
 unsigned int size(void)
 {
-    // TODO
-    return 0;
+    return wordcount;
 }
 
 /**
