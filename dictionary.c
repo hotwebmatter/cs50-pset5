@@ -74,12 +74,22 @@ bool load(const char* dictionary)
         {
             charpos = 26;
             curr->children[charpos] = (node *)malloc(sizeof(node));
+            if (curr->children[charpos] == NULL)
+            {
+                printf("Error: Failed to allocate memory for node\n");
+                return false;
+            }
             curr = curr->children[charpos];
         }
         else
         {
             charpos = toupper(c) - 'A';
             curr->children[charpos] = (node *)malloc(sizeof(node));
+            if (curr->children[charpos] == NULL)
+            {
+                printf("Error: Failed to allocate memory for node\n");
+                return false;
+            }
             curr = curr->children[charpos];
         }
         // printf("character: %c\tcharpos: %i\n", c, charpos);
