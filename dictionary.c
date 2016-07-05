@@ -82,7 +82,7 @@ bool load(const char* dictionary)
             curr->children[charpos] = (node *)malloc(sizeof(node));
             curr = curr->children[charpos];
         }
-        printf("character: %c\tcharpos: %i\n", c, charpos);
+        // printf("character: %c\tcharpos: %i\n", c, charpos);
     }
     // printf("word count: %i\n", wordcount);
     // return false;
