@@ -8,6 +8,9 @@
  */
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
 #include "dictionary.h"
 
@@ -19,24 +22,16 @@
 typedef struct node
 {
     bool is_word;
-    struct node* children[KIDS]
+    struct node* children[KIDS];
 }
 node;
 
 // initialize root node
 node* root;
-root = (node *)malloc(sizeof(node));
-// check for NULL
-if (root == NULL)
-{
-    printf("Could not allocate memory to create root node\n");
-    exit(1);
-}
-// set children to NULL
-for (i = 0; i < KIDS; i++)
-{
-    root->children[i] = NULL;
-}
+
+// declare global variables
+int wordcount = 0;
+int* wcp = &wordcount;
 
 /**
  * Returns true if word is in dictionary else false.
@@ -52,11 +47,39 @@ bool check(const char* word)
  */
 bool load(const char* dictionary)
 {
+    // initialize trie
+    root = (node *)malloc(sizeof(node));
+    // check for NULL
+    if (root == NULL)
+    {
+        printf("Could not allocate memory to create root node\n");
+        exit(1);
+    }
+    // set is_word to false, children to NULL
+    root->is_word = false;
+    // for (i = 0; i < KIDS; i++)
+    // {
+    //     root->children[i] = NULL;
+    // }
+
+    // try to open dictionary
     FILE* fp = fopen(dictionary, "r");
     if (fp == NULL)
     {
         printf("Could not open %s.\n", dictionary);
         return false;
+    }
+    for (int charpos = -1, c = fgetc(fp); c!= EOF; c = fgetc(fp))
+    {
+        if (c == '\'')
+        {
+            charpos = 26;
+        }
+        else
+        {
+            charpos = toupper(c) - 'A';
+        }
+        printf("character: %c\tcharpos: %i\n", c, charpos);
     }
     return false;
 }
