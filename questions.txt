@@ -108,6 +108,54 @@
     about reading words from a file. In other words, convince us that you
     indeed understand how that function’s for loop works.
 
+    First, we try to open the text file passed as a command-line argument.
+    We have already checked to ensure the correct number of arguments:
+
+    if (argc != 2 && argc != 3)
+    {
+        printf("Usage: speller [dictionary] text\n");
+        return 1;
+    }
+
+    Since we did not print the Usage and exit, there are two possibilities.
+
+    Either the user has optionally specified a dictionary, in which case:
+    (argc == 3) and the source text is argv[2]
+
+    or the user omitted the optional argument, using the default dictionary:
+    (argc == 2) and the source text is argv[1].
+
+    We use the ternary operator to determine which argument contains the file:
+    char* text = (argc == 3) ? argv[2] : argv[1];
+    For legibility, we declare a char* text and store the appropriate arg there.
+
+    Then, we try to open the file pointer for reading:
+    FILE* fp = fopen(text, "r");
+
+    If this operation fails and (fp == NULL), we complain and quit.
+
+    Now, we declare global variables used in the spell-check.
+    There are three int variables, and one char array:
+    int index = 0, misspellings = 0, words = 0;
+    char word[LENGTH+1];
+
+    The three ints are initialized to zero:
+    index will be used to index into the word[] array,
+          and reset to zero at the start of each new word.
+    misspellings will be incremented by one if check(word) returns true.
+    words will be incremented by one as each new word is found.
+
+    The char array is initialized to [LENGTH+1].
+    LENGTH is a symbolic constant defined in dictionary.h:
+    // maximum length for a word
+    // (e.g., pneumonoultramicroscopicsilicovolcanoconiosis)
+    #define LENGTH 45
+
+    We set word[LENGTH+1] to allow an extra char for the NUL terminator '\0'
+    after our longest word (pneumonoultramicroscopicsilicovolcanoconiosis).
+
+
+
 
 5.  Why do you think we used fgetc to read each word’s characters one at a time
     rather than use fscanf with a format string like "%s" to read whole words 
