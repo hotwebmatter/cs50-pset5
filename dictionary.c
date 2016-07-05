@@ -12,6 +12,33 @@
 #include "dictionary.h"
 
 /**
+ * dictionary data structure: it's worth a trie
+ */
+#define KIDS 27
+
+typedef struct node
+{
+    bool is_word;
+    struct node* children[KIDS]
+}
+node;
+
+// initialize root node
+node* root;
+root = (node *)malloc(sizeof(node));
+// check for NULL
+if (root == NULL)
+{
+    printf("Could not allocate memory to create root node\n");
+    exit(1);
+}
+// set children to NULL
+for (i = 0; i < KIDS; i++)
+{
+    root->children[i] = NULL;
+}
+
+/**
  * Returns true if word is in dictionary else false.
  */
 bool check(const char* word)
@@ -25,7 +52,12 @@ bool check(const char* word)
  */
 bool load(const char* dictionary)
 {
-    // TODO
+    FILE* fp = fopen(dictionary, "r");
+    if (fp == NULL)
+    {
+        printf("Could not open %s.\n", dictionary);
+        return false;
+    }
     return false;
 }
 
