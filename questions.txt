@@ -1,33 +1,132 @@
 0.  What is pneumonoultramicroscopicsilicovolcanoconiosis?
+
     According to Merriam-Webster's Medical Dictionary,
     pneumonoultramicroscopicsilicovolcanoconiosis is a
     pneumoconiosis caused by inhalation of very fine
     silicate or quartz dust.
 
 1.  According to its man page, what does getrusage do?
+    
+    #include <sys/time.h>
+    #include <sys/resource.h>
+    int getrusage( int <who>, struct rusage <*usage> )
+
+    getrusage() returns resource usage measures for <who>,
+    which can be one of the following:
+
+    RUSAGE_SELF
+    Return resource usage statistics for the calling process, which is the sum
+    of resources used by all threads in the process.
+
+    RUSAGE_CHILDREN
+    Return resource usage statistics for all children of the calling process
+    that have terminated and been waited for.  These statistics will include the
+    resources used by grandchildren, and further removed descendants, if all of
+    the intervening descendants waited on their terminated children.
+
+    RUSAGE_THREAD (since Linux 2.6.26)
+    Return resource usage statistics for the calling thread.
 
 2.  Per that same man page, how many members are in a variable
     of type struct rusage?
 
+    The resource usages are returned in the structure pointed to by usage, which has the following form:
+
+        struct rusage {
+            struct timeval ru_utime; /* user CPU time used */
+            struct timeval ru_stime; /* system CPU time used */
+            long   ru_maxrss;        /* maximum resident set size */
+            long   ru_ixrss;         /* integral shared memory size */
+            long   ru_idrss;         /* integral unshared data size */
+            long   ru_isrss;         /* integral unshared stack size */
+            long   ru_minflt;        /* page reclaims (soft page faults) */
+            long   ru_majflt;        /* page faults (hard page faults) */
+            long   ru_nswap;         /* swaps */
+            long   ru_inblock;       /* block input operations */
+            long   ru_oublock;       /* block output operations */
+            long   ru_msgsnd;        /* IPC messages sent */
+            long   ru_msgrcv;        /* IPC messages received */
+            long   ru_nsignals;      /* signals received */
+            long   ru_nvcsw;         /* voluntary context switches */
+            long   ru_nivcsw;        /* involuntary context switches */
+        };
+
+    There are sixteen members in a variable of type struct rusage.
+
+    However, further reading in the manual page reveals that seven of these
+    fields are unmaintained and currently unused on Linux systems:
+
+    ru_ixrss, ru_idrss, ru_isrss, ru_nswap, ru_msgsnd, ru_msgrcv, ru_nsignals
+
+    "Not all fields are completed; unmaintained fields are set to zero by the
+    kernel. (The unmaintained fields are provided for compatibility with other
+    systems, and because they may one day be supported on Linux.)"
+
+    After ignoring the unused fields, nine member fields remain available.
+
+    However, "POSIX.1-2001 specifies getrusage(), but specifies only the fields
+    ru_utime and ru_stime." A close reading of the speller.c source code reveals
+    that, indeed, only these two POSIX-compliant fields are used in our program.
+
+    ru_utime
+    This is the total amount of time spent executing in user mode, expressed in
+    a timeval structure (seconds plus microseconds).
+
+    ru_stime
+    This is the total amount of time spent executing in kernel mode, expressed
+    in a timeval structure (seconds plus microseconds).
+
 3.  Why do you think we pass before and after by reference (instead of by value)
     to calculate, even though we’re not changing their contents?
+
+    In speller.c:35 we declare these two variables of type struct rusage:
+    
+    // structs for timing data:
+    struct rusage before, after;
+
+    Then, whenever we call getrusage() we pass the address of one of these,
+    using the & (address-of) operator:
+
+    // load dictionary
+    getrusage(RUSAGE_SELF, &before);
+    bool loaded = load(dictionary);
+    getrusage(RUSAGE_SELF, &after);
+
+    This is how getrusage() returns the resource usage statistics: by modifying
+    the members of the referenced variables, rather than by explicitly returning
+    a struct. (The prototype declaration makes it clear that getrusage() will
+    return an int return value. Also, from the manpage: "On success, zero is 
+    returned.  On error, -1 is returned, and errno is set appropriately.")
+
+    I am not certain, but I think that the reason to continue passing pointers
+    to &before and &after when using the calculate() function, rather than
+    passing copies of these variables by value, is primarily a question of
+    efficiency. After all, we are measuring resource usage. Why should we waste
+    system resources making copies of the resource usage statistics?
 
 4.  Explain as precisely as possible, in a paragraph or more, how main goes
     about reading words from a file. In other words, convince us that you
     indeed understand how that function’s for loop works.
+
 
 5.  Why do you think we used fgetc to read each word’s characters one at a time
     rather than use fscanf with a format string like "%s" to read whole words 
     at a time? Put another way, what problems might arise by relying on fscanf 
     alone?
 
+
 6.  Why do you think we declared the parameters for check and load as const?
+
 
 7.  TODO
 
+
 8.  TODO
+
 
 9.  TODO
 
+
 10. TODO
+
 
