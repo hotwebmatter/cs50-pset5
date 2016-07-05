@@ -69,18 +69,34 @@ bool load(const char* dictionary)
         printf("Could not open %s.\n", dictionary);
         return false;
     }
-    for (int charpos = -1, c = fgetc(fp); c!= EOF; c = fgetc(fp))
+
+    // locally-scoped variable declarations
+    int charpos = -1; // initially set out of range
+    node* curr = root;
+
+    for (int c = fgetc(fp); c!= EOF; c = fgetc(fp))
     {
-        if (c == '\'')
+        if (c == '\n')
+        {
+            curr->is_word = true;
+            wordcount++;
+            curr = root;
+        }
+        else if (c == '\'')
         {
             charpos = 26;
+            curr->children[charpos] = (node *)malloc(sizeof(node));
+            curr = curr->children[charpos];
         }
         else
         {
             charpos = toupper(c) - 'A';
+            curr->children[charpos] = (node *)malloc(sizeof(node));
+            curr = curr->children[charpos];
         }
         printf("character: %c\tcharpos: %i\n", c, charpos);
     }
+    printf("word count: %i\n", wordcount);
     return false;
 }
 
