@@ -8,26 +8,55 @@
  */
 
 #include <stdbool.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 
 #include "dictionary.h"
 
-// initialize root node
-node* root;
+// initialize root node and crawler
+node *root, *curr = NULL;
 
-// declare global variables
+// declare global variable
 int wordcount = 0;
-int* wcp = &wordcount;
 
 /**
  * Returns true if word is in dictionary else false.
  */
 bool check(const char* word)
 {
-    // TODO
-    return false;
+    int len = strlen(word);
+    if (root == NULL)
+    {
+        printf("Somehow, the dictionary was never loaded into memory.\n");
+        exit(1);
+    }
+    curr = root;
+    for (int i = 0, pos = -1; i < len ; i++)
+    {
+        pos = charPosition(word[i]);
+        if (curr->children[pos] == NULL)
+        {
+            return false;
+        }
+        else 
+        {
+            curr = curr->children[pos];
+        }
+        if (i == len - 1 && curr->is_word == true)
+        {
+            return true;
+        }
+    }
+    if (curr->is_word == true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /**
@@ -58,9 +87,9 @@ bool load(const char* dictionary)
         return false;
     }
 
-    // locally-scoped variable declarations
+    // variable declarations
     int charpos = -1; // initially set out of range
-    node* curr = root;
+    curr = root;
 
     for (int c = fgetc(fp); c!= EOF; c = fgetc(fp))
     {
