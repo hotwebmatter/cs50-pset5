@@ -142,7 +142,8 @@
     The three ints are initialized to zero:
     index will be used to index into the word[] array,
           and reset to zero at the start of each new word.
-    misspellings will be incremented by one if check(word) returns true.
+    misspellings will be incremented by one if check(word) returns false,
+                 indicating that (word) is not in the dictionary.
     words will be incremented by one as each new word is found.
 
     The char array is initialized to [LENGTH+1].
@@ -154,8 +155,105 @@
     We set word[LENGTH+1] to allow an extra char for the NUL terminator '\0'
     after our longest word (pneumonoultramicroscopicsilicovolcanoconiosis).
 
+    Now that our file pointer is opened for reading, and all of the necessary
+    global variables have been declared, we are ready to analyze the for loop.
 
+    for (int c = fgetc(fp); c != EOF; c = fgetc(fp))
 
+    Line 76, above, is the heart of the loop. It declares an automatic local
+    variable c for temporary storage of each character read from the file. (Note
+    that c is declared as an int rather than as a char, since that's the
+    data type returned by fgetc() -- but that's fine, because in C, character
+    literals actually have type int, since chars are numeric values!) The for
+    loop's conditional statement tests whether (c != EOF) and continues to
+    iterate through the loop until the EOF (end of file character) is reached.
+    Finally, each iteration assigns the value of c to fgetc(fp) -- in effect,
+    reading the next character from the file and saving its value in int c.
+
+    if (isalpha(c) || (c == '\'' && index > 0))
+    Line 79, above, tests to make sure that each character is alphabetical, with
+    one exception: an apostrophe character may be included (in contractions and
+    possessives) provided that index > 0 (that is to say, the apostrophe is not
+    the first character in the word). If this returns true, we append each
+    successive character to the word[] array and increment the index:
+
+    82      word[index] = c;
+    83      index++;
+
+    NOTE: 82 and 83 are line numbers which are not part of the C source file.
+          Any line numbers included ahead are intended only for convenience, and
+          should be disregarded when analyzing C syntax.
+    If we encounter a string longer than the symbolic constant LENGTH (45
+    characters) we disregard it by consuming the remainder of the string:
+    89      while ((c = fgetc(fp)) != EOF && isalpha(c));
+    ... which just sucks up the chars looking for a space or non-alphabetic
+    character, without attempting to add the chars to the word[] array ...
+    and then preparing for a new word:
+    92      index = 0;
+
+    There are two "else if" conditional branches in the loop:
+
+    97  else if (isdigit(c))
+    The above line tests to see whether a digit is encountered in the word, and
+    if one is found, we use a similar method to skip it:
+    100     while ((c = fgetc(fp)) != EOF && isalnum(c));
+    ... which just sucks up the chars looking for a space or non-alphanumeric
+    character, without attempting to add the chars to the word[] array ...
+    and then prepare for a new word:
+    103     index = 0;
+
+    The remaining conditional branch is where the bulk of the work is done:
+    107 else if (index > 0)
+    ... this doesn't look like much on its own, but it will only be reached if
+    fgetc() returns whitespace or punctuation after non-zero stretch of
+    alphabetic characters, without bumping into any numeric chars or exceeding
+    the LENGTH symbolic constant. If all that is true, we terminate the string:
+
+    110             word[index] = '\0';
+    ... by adding the NUL terminator to the next place in the array. Then:
+
+    113             words++;
+    ... we auto-increment the word count by one, and move on to spell checking!
+
+    // check word's spelling
+    116             getrusage(RUSAGE_SELF, &before);
+    117             bool misspelled = !check(word);
+    118             getrusage(RUSAGE_SELF, &after);
+    119 
+    120             // update benchmark
+    121             time_check += calculate(&before, &after);
+    ... lines 116 and 118 are calls to getrusage() discussed above, which are
+    used to calculate the amount of time spent, in user mode and kernel mode, on
+    the call to the check() function.
+    ... line 117 declares a boolean variable to store the value returned by
+    the check() function, which will be TRUE if the word is in the dictionary
+    and FALSE if it is not. But wait! bool misspelled actually stores the
+    logical inverse of the return value -- so if check() returns TRUE, then the
+    word is in the dictionary and misspelled = FALSE, whereas if check() returns
+    FALSE, then the word is not in the dictionary, and misspelled = TRUE.
+    ... line 121 sets the benchmark for the check() function by calling
+    calculate() which basically takes the difference between the timeval
+    structures, after - before, returned by getrusage(). This is a slight
+    oversimplification, but a more complete answer would be beyond the scope
+    of this question.
+
+    Little remains in the implementation.
+    We check to see whether (misspelled == TRUE) and if it is, we print the
+    misspelled word and increment the misspellings counter:
+
+    123             // print word if misspelled
+    124             if (misspelled)
+    125             {
+    126                 printf("%s\n", word);
+    127                 misspellings++;
+    128             }
+    129 
+    130             // prepare for next word
+    131             index = 0;
+    132         }
+    133     }
+
+    That's the end of the for loop!
 
 5.  Why do you think we used fgetc to read each word’s characters one at a time
     rather than use fscanf with a format string like "%s" to read whole words 
