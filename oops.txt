@@ -1,0 +1,50 @@
+ 1164  mv texts/kyushu_azusa.txt texts/byzantium.txt
+ 1165  vim texts/byzantium.txt 
+ 1166  ./speller texts/byzantium.txt 
+ 1168  vim texts/byzantium.txt 
+ 1169  ./speller texts/byzantium.txt 
+ 1171  ./speller texts/byzantium.txt 
+ 1173  grep dzung dictionaries/large >> texts/byzantium.txt 
+ 1174  ./speller texts/byzantium.txt 
+ 1176  grep ezra dictionaries/large >> texts/byzantium.txt 
+ 1177  ./speller texts/byzantium.txt 
+ 1179  grep fyza dictionaries/large >> texts/byzantium.txt 
+ 1180  ./speller texts/byzantium.txt 
+ 1182  grep gyve dictionaries/large >> texts/byzantium.txt 
+ 1184  echo hz >> texts/byzantium.txt 
+ 1185  cat texts/byzantium.txt 
+ 1186  ./speller texts/byzantium.txt 
+ 1188  echo izzard >> texts/byzantium.txt 
+ 1189  ./speller texts/byzantium.txt 
+ 1191  echo jylland >> texts/byzantium.txt 
+ 1192  ./speller texts/byzantium.txt 
+ 1195  grep lyub >> texts/byzantium.txt 
+ 1196  grep lyub dictionaries/large >> texts/byzantium.txt 
+ 1197  cat texts/byzantium.txt 
+ 1198  sort texts/byzantium.txt 
+ 1199  sort texts/byzantium.txt > texts/byzantium
+ 1200  mv texts/byzantium texts/byzantium.txt 
+ 1202  grep mzun dictionaries/large >> texts/byzantium.txt 
+ 1205  grep nyanza dictionaries/large >> texts/byzantium.txt 
+ 1207  echo nyx >> texts/byzantium.txt 
+ 1210  grep ozzie dictionaries/large >> texts/byzantium.txt 
+ 1212  grep pyxie dictionaries/large >> texts/byzantium.txt 
+ 1214  grep quoting dictionaries/large >> texts/byzantium.txt 
+ 1215  ./speller texts/byzantium.txt 
+ 1217  grep pyxi dictionaries/large >> texts/byzantium.txt 
+ 1218  sort texts/byzantium.txt |uniq >> byzantine.txt
+ 1219  mv byzantine.txt texts/byzantium.txt 
+ 1220  ./speller texts/byzantium.txt 
+ 1222  vim texts/byzantium.txt 
+ 1223  tail texts/byzantium.txt 
+ 1226  grep rzew dictionaries/large >> texts/byzantium.txt 
+ 1228  grep szyma dictionaries/large >> texts/byzantium.txt 
+ 1231  grep tzitz dictionaries/large >> texts/byzantium.txt 
+ 1235  grep uzi\'s dictionaries/large >> texts/byzantium.txt 
+ 1237  grep vyvy dictionaries/large >> texts/byzantium.txt 
+ 1239  grep wyve dictionaries/large >> texts/byzantium.txt 
+ 1241  grep xyst dictionaries/large > texts/byzantium.txt 
+ 1243  grep ywis dictionaries/large wc -l texts/byzantium.txt 
+ 1244  wc -l texts/byzantium.txt 
+ 1245  cat texts/byzantium.txt 
+ 1246  history |grep texts/byzantium.txt >> oops.txt

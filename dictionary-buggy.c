@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
 
 #include "dictionary.h"
 
@@ -26,14 +25,13 @@ int wordcount = 0;
  */
 bool check(const char* word)
 {
-    int len = strlen(word);
     if (root == NULL)
     {
         printf("Somehow, the dictionary was never loaded into memory.\n");
         exit(1);
     }
     curr = root;
-    for (int i = 0, pos = -1; i < len ; i++)
+    for ( ; *word != '\0' ; word++)
     {
         pos = charPosition(word[i]);
         if (curr->children[pos] == NULL)
@@ -43,10 +41,6 @@ bool check(const char* word)
         else 
         {
             curr = curr->children[pos];
-        }
-        if (i == len - 1 && curr->is_word == true)
-        {
-            return true;
         }
     }
     if (curr->is_word == true)
