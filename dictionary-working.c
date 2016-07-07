@@ -8,6 +8,7 @@
  */
 
 #include <stdbool.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -25,17 +26,16 @@ int wordcount = 0;
  */
 bool check(const char* word)
 {
-    // int len = strlen(word);      // without strlen() I no longer need <string.h>
+    int len = strlen(word);
     if (root == NULL)
     {
         printf("Somehow, the dictionary was never loaded into memory.\n");
         exit(1);
     }
     curr = root;
-    // for (int i = 0, pos = -1; i < len ; i++)     // the loop below is better!
-    for ( ; *word != '\0' ; word++)
+    for (int i = 0, pos = -1; i < len ; i++)
     {
-        int pos = charPosition(*word);
+        pos = charPosition(word[i]);
         if (curr->children[pos] == NULL)
         {
             return false;
@@ -43,6 +43,10 @@ bool check(const char* word)
         else 
         {
             curr = curr->children[pos];
+        }
+        if (i == len - 1 && curr->is_word == true)
+        {
+            return true;
         }
     }
     if (curr->is_word == true)
@@ -72,7 +76,7 @@ bool load(const char* dictionary)
     root->is_word = false;
     // for (i = 0; i < KIDS; i++)
     // {
-    //     root->children[i] = NULL;    // Not necessary in c99
+    //     root->children[i] = NULL;
     // }
 
     // try to open dictionary
@@ -106,7 +110,6 @@ bool load(const char* dictionary)
                     printf("Error: Failed to allocate memory for node\n");
                     return false;
                 }
-                curr->children[charpos]->is_word = false;
             }
             curr = curr->children[charpos];
         }
