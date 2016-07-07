@@ -70,10 +70,10 @@ bool load(const char* dictionary)
     }
     // set is_word to false, children to NULL
     root->is_word = false;
-    for (int i = 0; i < KIDS; i++)
-    {
-        root->children[i] = NULL;    // Initialize all pointers
-    }
+    // for (int i = 0; i < KIDS; i++)
+    // {
+    //     root->children[i] = NULL;    // Initialize all pointers
+    // }
 
     // try to open dictionary
     FILE* fp = fopen(dictionary, "r");
@@ -106,17 +106,14 @@ bool load(const char* dictionary)
                     printf("Error: Failed to allocate memory for node\n");
                     return false;
                 }
-                else
+                curr->children[charpos]->is_word = false;
+                for (int j = 0; j < KIDS; j++)
                 {
-                    curr->children[charpos]->is_word = false;
-                    for (int j = 0; j < KIDS; j++)
-                    {
-                        curr->children[charpos]->children[j] = NULL;    // Initialize all pointers
-                    }
+                    curr->children[j] = NULL;    // Initialize all pointers
                 }
+
             }
             curr = curr->children[charpos];
-
         }
         // printf("character: %c\tcharpos: %i\n", c, charpos);
     }
