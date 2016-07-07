@@ -8,6 +8,7 @@
  */
 
 #include <stdbool.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -25,17 +26,16 @@ int wordcount = 0;
  */
 bool check(const char* word)
 {
-    // int len = strlen(word);      // without strlen() I no longer need <string.h>
+    int len = strlen(word);
     if (root == NULL)
     {
         printf("Somehow, the dictionary was never loaded into memory.\n");
         exit(1);
     }
     curr = root;
-    // for (int i = 0, pos = -1; i < len ; i++)     // the loop below is better!
-    for ( ; *word != '\0' ; word++)
+    for (int i = 0, pos = -1; i < len ; i++)
     {
-        int pos = charPosition(*word);
+        pos = charPosition(word[i]);
         if (curr->children[pos] == NULL)
         {
             return false;
@@ -43,6 +43,10 @@ bool check(const char* word)
         else 
         {
             curr = curr->children[pos];
+        }
+        if (i == len - 1 && curr->is_word == true)
+        {
+            return true;
         }
     }
     if (curr->is_word == true)
@@ -70,10 +74,10 @@ bool load(const char* dictionary)
     }
     // set is_word to false, children to NULL
     root->is_word = false;
-    for (int i = 0; i < KIDS; i++)
-    {
-        root->children[i] = NULL;    // Initialize all pointers
-    }
+    // for (i = 0; i < KIDS; i++)
+    // {
+    //     root->children[i] = NULL;
+    // }
 
     // try to open dictionary
     FILE* fp = fopen(dictionary, "r");
@@ -98,31 +102,18 @@ bool load(const char* dictionary)
         else
         {
             charpos = charPosition(c);
+            curr->children[charpos] = (node *)malloc(sizeof(node));
             if (curr->children[charpos] == NULL)
             {
-                curr->children[charpos] = (node *)malloc(sizeof(node));
-                if (curr->children[charpos] == NULL)
-                {
-                    printf("Error: Failed to allocate memory for node\n");
-                    return false;
-                }
-                else
-                {
-                    curr->children[charpos]->is_word = false;
-                    for (int j = 0; j < KIDS; j++)
-                    {
-                        curr->children[charpos]->children[j] = NULL;    // Initialize all pointers
-                    }
-                }
+                printf("Error: Failed to allocate memory for node\n");
+                return false;
             }
             curr = curr->children[charpos];
-
         }
         // printf("character: %c\tcharpos: %i\n", c, charpos);
     }
     // printf("word count: %i\n", wordcount);
-    // remember to fclose file pointer!
-    fclose(fp);
+    // return false;
     return true;
 }
 
@@ -131,7 +122,7 @@ bool load(const char* dictionary)
  */
 unsigned int size(void)
 {
-    return wordcount;       // know when to use a global variable!
+    return wordcount;
 }
 
 /**
@@ -145,20 +136,20 @@ bool unload(void)
 
 bool free_trie(node* curr)
 {
-    bool result = false;
+    // bool result = false;
+    
+    // recursive case
     for (int i = 0; i < KIDS; i++)
     {
         if (curr->children[i] != NULL)
         {
-            result = free_trie(curr->children[i]);
-        }
-        else
-        {
-            free(curr);
-            return true;
+            // result = free_trie(curr->children[i]);
+            free_trie(curr->children[i]);
         }
     }
-    return result;
+    // base case
+    free(curr);
+    return true;
 }
 
 int charPosition(int character)
