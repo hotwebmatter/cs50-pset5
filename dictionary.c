@@ -70,10 +70,10 @@ bool load(const char* dictionary)
     }
     // set is_word to false, children to NULL
     root->is_word = false;
-    // for (i = 0; i < KIDS; i++)
-    // {
-    //     root->children[i] = NULL;    // Not necessary in c99
-    // }
+    for (int i = 0; i < KIDS; i++)
+    {
+        root->children[i] = NULL;    // Initialize all pointers
+    }
 
     // try to open dictionary
     FILE* fp = fopen(dictionary, "r");
@@ -107,6 +107,11 @@ bool load(const char* dictionary)
                     return false;
                 }
                 curr->children[charpos]->is_word = false;
+                for (int j = 0; j < KIDS; j++)
+                {
+                    curr->children[j] = NULL;    // Initialize all pointers
+                }
+
             }
             curr = curr->children[charpos];
         }
