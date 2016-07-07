@@ -18,6 +18,9 @@
 // initialize root node and crawler
 node *root, *curr = NULL;
 
+// initialize file pointer to NULL (so it's in global scope!)
+FILE* fp = NULL;
+
 // declare global variable
 int wordcount = 0;
 
@@ -74,13 +77,14 @@ bool load(const char* dictionary)
     }
     // set is_word to false, children to NULL
     root->is_word = false;
-    // for (i = 0; i < KIDS; i++)
-    // {
-    //     root->children[i] = NULL;
-    // }
+    for (int i = 0; i < KIDS; i++)
+    {
+        // pointers *must* be initialized to NULL
+        root->children[i] = NULL;
+    }
 
     // try to open dictionary
-    FILE* fp = fopen(dictionary, "r");
+    fp = fopen(dictionary, "r");
     if (fp == NULL)
     {
         printf("Could not open %s.\n", dictionary);
@@ -102,11 +106,21 @@ bool load(const char* dictionary)
         else
         {
             charpos = charPosition(c);
-            curr->children[charpos] = (node *)malloc(sizeof(node));
-            if (curr->children[charpos] == NULL)
+            if (curr->children[charpos] == NULL)  // *SHOULD* we malloc()?
             {
-                printf("Error: Failed to allocate memory for node\n");
-                return false;
+                curr->children[charpos] = (node *)malloc(sizeof(node));
+                if (curr->children[charpos] == NULL) // *DID* we malloc()?
+                {
+                    printf("Error: Failed to allocate memory for node\n");
+                    return false;
+                }
+                // initialize values for new node
+                curr->children[charpos]->is_word = false;
+                for (int j = 0; j < KIDS; j++)
+                {
+                    // pointers *must* be initialized to NULL
+                    curr->children[charpos]->children[j] = NULL;
+                }
             }
             curr = curr->children[charpos];
         }
@@ -131,6 +145,11 @@ unsigned int size(void)
 bool unload(void)
 {
     bool result = free_trie(root);
+    if (fp != NULL)
+    {
+        fclose(fp);
+        fp = NULL;
+    }
     return result;
 }
 
